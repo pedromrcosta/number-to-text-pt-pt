@@ -12,14 +12,12 @@
     <script>
         const isDigit029 = /^\d$/;
 
-        let annualValue = '13525';
+        let annualValue = '€13.525,00';
 
         const euros = annualValue.split(',')[0].slice(1);
         const cents = annualValue.split(',')[1];
 
         console.log('euros: ' + euros + ' cents: ' + cents);
-
-        console.log(annualValue.extenso());
     </script>
 </body>
 
