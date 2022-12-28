@@ -5,19 +5,205 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Value Extensive </title>
+    <title> Conversor de numero para texto extenso </title>
 </head>
 
 <body>
     <script>
-        const isDigit029 = /^\d$/;
 
-        let annualValue = '€13.525,00';
+        const valoresUnidades = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
+        const valoresDezavinte = ['onze', 'doze', 'treze', 'catorze', 'quinze', 'dezasseis', 'dezassete', 'dezoito', 'dezanove'];
+        const valoresDezenas = ['', 'dez', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+        const valoresCentenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos']
 
-        const euros = annualValue.split(',')[0].slice(1);
-        const cents = annualValue.split(',')[1];
+        // const numeroTeste = 7567007;
+        const numeroTeste = 20456;
+        let result = ``;
+        convertToText(numeroTeste);
+        console.log(result);
 
-        console.log('euros: ' + euros + ' cents: ' + cents);
+        function converterMilhoes(num) {
+            if (num >= 1000000 && num <= 9999999) {
+                let unidade = Math.floor(num / 1000000);
+                unidade === 1 ? result += `${valoresUnidades[unidade]} milhão` : result += `${valoresUnidades[unidade]} milhões`
+                converterMilhoes(num % 1000000);
+            } else {
+                converterMilhares(num);
+            }
+        }
+
+        function converterMilhares(num) {
+            const centenas = (num / 1000).toString().split('.')[1];
+            const milhares = Math.floor(num / 1000);
+
+            let centenaMilhar;
+            let dezenaMilhar;
+            let milhar;
+
+            if (num >= 100000) {
+                centenaMilhar = Number.parseInt(milhares.toString().split('')[0]);
+                dezenaMilhar = Number.parseInt(milhares.toString().split('')[1]);
+                milhar = Number.parseInt(milhares.toString().split('')[2]);
+            } else if (num >= 10000) {
+                dezenaMilhar = Number.parseInt(milhares.toString().split('')[0]);
+                milhar = Number.parseInt(milhares.toString().split('')[1]);
+            } else {
+                milhar = Number.parseInt(milhares.toString().split('')[0]);
+            }
+
+            // if 111 
+            if (centenaMilhar && dezenaMilhar && milhar) {
+                result.length === 0 ?
+                    result += `${valoresCentenas[centenaMilhar]} e ${valoresDezenas[dezenaMilhar]} e ${valoresUnidades[milhar]}` :
+                    result += ` ${valoresCentenas[centenaMilhar]} e ${valoresDezenas[dezenaMilhar]} e ${valoresUnidades[milhar]}`
+                result += ` mil`;
+            }
+
+            // if 110
+            if (centenaMilhar && dezenaMilhar && (isNaN(milhar) || milhar === 0)) {
+                result.length === 0 ?
+                    result += `${valoresCentenas[centenaMilhar]} e ${valoresDezenas[dezenaMilhar]}` :
+                    result += ` ${valoresCentenas[centenaMilhar]} e ${valoresDezenas[dezenaMilhar]}`
+                result += ` mil`;
+            }
+
+            // if 101
+            if (centenaMilhar && (isNaN(dezenaMilhar) || dezenaMilhar === 0) && milhar) {
+                result.length === 0 ?
+                    result += `${valoresCentenas[centenaMilhar]} e ${valoresUnidades[milhar]}` :
+                    result += ` ${valoresCentenas[centenaMilhar]} e ${valoresUnidades[milhar]}`
+                result += ` mil`;
+            }
+
+            // if 100
+            if (centenaMilhar && (isNaN(dezenaMilhar) || dezenaMilhar === 0) && (isNaN(dezenaMilhar) || dezenaMilhar === 0)) {
+                if (centenaMilhar === 1) {
+                    result.length === 0 ?
+                        result += `cem` :
+                        result += ` cem`
+                } else {
+                    result.length === 0 ?
+                        result += `${valoresCentenas[centenaMilhar]}` :
+                        result += ` ${valoresCentenas[centenaMilhar]}`
+                }
+                result += ` mil`;
+            }
+
+            // if 011
+            if ((isNaN(centenaMilhar) || centenaMilhar === 0) && dezenaMilhar && milhar) {
+                if (dezenaMilhar === 1) {
+                    result.length === 0 ?
+                        result += `${valoresDezavinte[milhar]}` :
+                        result += ` ${valoresDezavinte[milhar]}`
+                } else {
+                    result.length === 0 ?
+                        result += `${valoresDezenas[dezenaMilhar]} e ${valoresUnidades[milhar]}` :
+                        result += ` ${valoresDezenas[dezenaMilhar]} e ${valoresUnidades[milhar]}`
+                }
+                result += ` mil`;
+            }
+
+            // if 010
+            if ((isNaN(centenaMilhar) || centenaMilhar === 0) && dezenaMilhar && (isNaN(milhar) || milhar === 0)) {
+                result.length === 0 ?
+                    result += `${valoresDezenas[dezenaMilhar]}` :
+                    result += ` ${valoresDezenas[dezenaMilhar]}`
+                result += ` mil`;
+            }
+
+            // if 001
+            if ((isNaN(centenaMilhar) || centenaMilhar === 0) && (isNaN(dezenaMilhar) || dezenaMilhar === 0) && milhar) {
+                result.length === 0 ?
+                    result += `${valoresUnidades[milhar]}` :
+                    result += ` ${valoresUnidades[milhar]}`
+                result += ` mil`;
+            }
+
+
+            converterCentenas(centenas);
+        }
+
+        function converterCentenas(num) {
+            let centena;
+            let dezena;
+            let unidade;
+
+            if (num >= 100) {
+                centena = Number.parseInt(num.toString().split('')[0]);
+                dezena = Number.parseInt(num.toString().split('')[1]);
+                unidade = Number.parseInt(num.toString().split('')[2]);
+            } else if (num >= 10000) {
+                dezena = Number.parseInt(num.toString().split('')[0]);
+                unidade = Number.parseInt(num.toString().split('')[1]);
+            } else {
+                unidade = Number.parseInt(num.toString().split('')[0]);
+            }
+
+            // if 111 
+            if (centena && dezena && unidade) {
+                result.length === 0 ?
+                    result += `${valoresCentenas[centena]} e ${valoresDezenas[dezena]} e ${valoresUnidades[unidade]}` :
+                    result += ` ${valoresCentenas[centena]} e ${valoresDezenas[dezena]} e ${valoresUnidades[unidade]}`
+            }
+
+            // if 110
+            if (centena && dezena && (isNaN(unidade) || unidade === 0)) {
+                result.length === 0 ?
+                    result += `${valoresCentenas[centena]} e ${valoresDezenas[dezena]}` :
+                    result += ` ${valoresCentenas[centena]} e ${valoresDezenas[dezena]}`
+            }
+
+            // if 101
+            if (centena && (isNaN(dezena) || dezena === 0) && unidade) {
+                result.length === 0 ?
+                    result += `${valoresCentenas[centena]} e ${valoresUnidades[unidade]}` :
+                    result += ` ${valoresCentenas[centena]} e ${valoresUnidades[unidade]}`
+            }
+
+            // if 100
+            if (centena && (isNaN(dezena) || dezena === 0) && (isNaN(unidade) || unidade === 0)) {
+                if (centena === 1) {
+                    result.length === 0 ?
+                        result += `cem` :
+                        result += ` cem`
+                } else {
+                    result.length === 0 ?
+                        result += `${valoresCentenas[centena]}` :
+                        result += ` ${valoresCentenas[centena]}`
+                }
+            }
+
+            // if 011
+            if ((isNaN(centena) || centena === 0) && dezena && unidade) {
+                if (dezena === 1) {
+                    result.length === 0 ?
+                        result += `${valoresDezavinte[unidade]}` :
+                        result += ` ${valoresDezavinte[unidade]}`
+                } else {
+                    result.length === 0 ?
+                        result += `${valoresDezenas[dezena]} e ${valoresUnidades[unidade]}` :
+                        result += ` ${valoresDezenas[dezena]} e ${valoresUnidades[unidade]}`
+                }
+            }
+
+            // if 010
+            if ((isNaN(centena) || centena === 0) && dezena && (isNaN(unidade) || unidade === 0)) {
+                result.length === 0 ?
+                    result += `${valoresDezenas[dezena]}` :
+                    result += ` ${valoresDezenas[dezena]}`
+            }
+
+            // if 001
+            if ((isNaN(centena) || centena === 0) && (isNaN(dezena) || dezena === 0) && unidade) {
+                result.length === 0 ?
+                    result += `${valoresUnidades[unidade]}` :
+                    result += ` ${valoresUnidades[unidade]}`
+            }
+        }
+
+        function convertToText(num) {
+            converterMilhoes(num)
+        }
     </script>
 </body>
 
