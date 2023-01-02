@@ -16,7 +16,7 @@
         const valoresDezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
         const valoresCentenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos']
 
-        const numeroTeste = 101100;
+        const numeroTeste = 200001;
         let result = ``;
         convertToText(numeroTeste);
         console.log(result);
@@ -26,19 +26,27 @@
         }
 
         function checkDigits(unidades, dezenas, centenas) {
+
             if (centenas > 0) {
-                dezenas + unidades > 0 ? addToResult(`${valoresCentenas[centenas]} e`) : addToResult(`cem`)
+                centenas === 1 && dezenas + unidades === 0 ? addToResult(`cem`) : addToResult(`${valoresCentenas[centenas]}`)
+                if (dezenas + unidades > 0) {
+                    addToResult(`e`);
+                }
             }
 
             if (dezenas === 1) {
                 addToResult(valoresDezavinte[unidades]);
             } else if (dezenas > 1) {
-                addToResult(valoresDezenas[dezenas] + ` e`);
+                addToResult(valoresDezenas[dezenas]);
+                if (unidades > 0) {
+                    addToResult(`e`);
+                }
             }
 
             if (unidades > 0 && dezenas !== 1) {
                 addToResult(valoresUnidades[unidades]);
             }
+
         }
 
         function converterMilhoes(num) {
@@ -49,11 +57,12 @@
                     converterMilhoes(num % 1000000);
                 }
             } else {
-                converterMilhares(num);
+                converterDigitos(num);
             }
         }
 
-        function converterMilhares(num) {
+        function converterDigitos(num) {
+            console.log(num)
             if (num >= 1000) {
                 // centenas
                 const centenas = Math.floor(num / 100000);
@@ -65,8 +74,11 @@
                 checkDigits(unidades, dezenas, centenas);
                 if (unidades + dezenas + centenas > 0) {
                     addToResult(`mil`);
+                    if (num % 1000 > 0) {
+                        addToResult(`e`);
+                    }
                 }
-                converterMilhares(num % 1000);
+                converterDigitos(num % 1000);
             } else {
                 const centenas = Math.floor(num / 100);
                 // dezenas
