@@ -16,7 +16,7 @@
         const valoresDezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
         const valoresCentenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos']
 
-        const numeroTeste = 200001;
+        const numeroTeste = 234121;
         let result = ``;
         convertToText(numeroTeste);
         console.log(result);
@@ -28,7 +28,7 @@
         function checkDigits(unidades, dezenas, centenas) {
 
             if (centenas > 0) {
-                centenas === 1 && dezenas + unidades === 0 ? addToResult(`cem`) : addToResult(`${valoresCentenas[centenas]}`)
+                centenas === 1 && dezenas + unidades === 0 ? addToResult(`e cem`) : addToResult(`${valoresCentenas[centenas]}`)
                 if (dezenas + unidades > 0) {
                     addToResult(`e`);
                 }
@@ -75,11 +75,12 @@
                 if (unidades + dezenas + centenas > 0) {
                     addToResult(`mil`);
                     if (num % 1000 > 0) {
-                        addToResult(`e`);
+                        // addToResult(`e`);
                     }
                 }
                 converterDigitos(num % 1000);
             } else {
+                // centenas
                 const centenas = Math.floor(num / 100);
                 // dezenas
                 const dezenas = Math.floor(num / 10) % 10;
